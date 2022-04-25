@@ -1,3 +1,4 @@
+/*
 window.addEventListener('load', function () {
                 if (window.ethereum) {
                     window.web3 = new Web3(ethereum);
@@ -725,3 +726,4 @@ web3.eth.getAccounts(function (err, acc) {
 });
 mintButton.innerText = "Click Here To Mint";
 }
+*/
