@@ -807,12 +807,9 @@ web3.eth.getAccounts(function (err, acc) {
       contract.methods.whiteListMint(hexProof).send({from: acc[0]});
       console.log(acc[0]);
       }
-
-
-
-
+    else{
       mintButton.innerText = "Your Address is not on the whitelist, please the refresh page"
-
+    }
 
 });
 mintButton.innerText = "Click Here To Mint";
