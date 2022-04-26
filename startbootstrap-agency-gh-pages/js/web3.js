@@ -248,8 +248,8 @@ function init() {
     "0x15caF267bA32020623A2E35F6365662d1E9e9202",
     "0xB8011C2Fee57a382d5c27078A8b601392076364"
   ];
-const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
 
+const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
 const merkleTree = new window.MerkleTree(leafNodes, keccak256, {sortPairs:true});
 console.log(merkleTree.toString())
 //Pass in the user's addresss instead of sigAd
@@ -788,7 +788,7 @@ var abi = [
 	}
 ];
 
-var address = "0x57B9806be85B4cEC3310A3aC80823304ff1C5FE4";
+var address = "0xf0994A74B7988770383b8a92C1a0505b4C78672A";
 const id = 1;
 const amount = 1;
 const contract = new web3.eth.Contract(abi, address);
@@ -804,7 +804,7 @@ web3.eth.getAccounts(function (err, acc) {
       let hexProof = merkleTree.getHexProof(keccak256(acc[0]));
       mintButton.innerText = "Transaction In Progress";
       contract.methods.whiteListMint(hexProof).send({from: acc[0]});
-      console.log("Transaction went through");
+      console.log(acc[0]);
       }
 
 
