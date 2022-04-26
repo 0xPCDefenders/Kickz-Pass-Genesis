@@ -1,48 +1,75 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
-//import dependencies
-import "@openzeppelin/contracts@4.4.2/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts@4.4.2/access/Ownable.sol";
-//Contract implements the ERC1155 NFT standard
-contract KickzPassGenesis is ERC1155, Ownable {
-//Initializes the URI for the NFT
-constructor() ERC1155("") {
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
 
-}
-//initializing state variables
-uint256 public mintRate = 0.0 ether;
-uint256 public minted = 0;
-uint256 public supplies = 250;
-address dev_account = 0x84aE2f756110352B432977d424beD9E22313fbA3;
-//Setting the URI for IPFS integration
-function setURI(string memory newuri) public onlyOwner {
-_setURI(newuri);
-}
-//to mint an NFT
-function mint(uint256 id, uint256 amount) payable public {
-uint256 pastmint;
-pastmint = balanceOf(msg.sender, 1);
-if(msg.sender == dev_account) {
-    //security requirements for dev address
-    require(amount == 5);
-    require(pastmint == 0, "You've maxed out the amount of tokens you can mint");
-    require(id == 1, "Token doesn't exist");
-    require(msg.value >= (amount * mintRate), "Not enough ether sent");
-    require(minted + amount <= supplies, "not enough supply left");
-    _mint(msg.sender, id, amount, "");
-    minted = minted + amount;
+/**  
 
-}
-if(msg.sender != dev_account) {
-    //security requirements for other addresses
-    require(amount == 1);
-    require(pastmint == 0, "You've maxed out the amount of tokens you can mint");
-    require(id == 1, "Token doesn't exist");
-    require(msg.value >= (amount * mintRate), "Not enough ether sent");
-    require(minted + amount <= supplies, "not enough supply left");
-    _mint(msg.sender, id, amount, "");
-    minted = minted + amount;
-}
+  _  ___      _           ____               
+ | |/ (_) ___| | __ ____ |  _ \ __ _ ___ ___ 
+ | ' /| |/ __| |/ /|_  / | |_) / _` / __/ __|
+ | . \| | (__|   <  / /  |  __/ (_| \__ \__ \
+ |_|\_\_|\___|_|\_\/___| |_|   \__,_|___/___/
+                                             
 
-}
+**/
+
+/// @author NFTprest (https://twitter.com/NFTprest)
+
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC1155/ERC1155.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol";
+
+contract KickzPassGenesis is ERC1155, Ownable, ReentrancyGuard {
+    
+  string public constant name = "Kickz Pass Genesis";
+  string public constant symbol = "KPG";
+
+  uint private constant MAX_SUPPLY = 250;
+  uint private constant PASS_ID = 1;
+
+  uint public passCount = 0;
+  
+  bool public isMintOpen = false;
+
+  //TODO: Update for production 
+  bytes32 public merkleRoot = 0xb273f668854fc22a03370abfa36c32b2db9837d8364b79c3b773328809e4bbfa;
+
+  mapping(address => uint) public mintCount;
+
+  //TODO: Update for production 
+  constructor() ERC1155("ipfs://QmdMn3YvP3vGSSKBy5AqCJoEGxY51MC1D388QJ9Ea7p2Gw/metadata.json") {}
+
+
+  function whiteListMint(bytes32[] calldata merkleProof) external nonReentrant{
+    require(passCount < MAX_SUPPLY, "Sold out");
+    require(mintCount[msg.sender] < 1, "At mint limit");
+    require(MerkleProof.verify(merkleProof, merkleRoot,keccak256(abi.encodePacked(msg.sender))), "Proof invalid");
+    require(isMintOpen, "Mint not open");
+
+    mintCount[msg.sender]++;
+    passCount++;
+    _mint(msg.sender, PASS_ID, 1, "");
+  }
+  
+  function setMintOpen() external onlyOwner{
+    isMintOpen = !isMintOpen;
+  }
+
+  function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner{
+    merkleRoot = _merkleRoot;
+  }
+
+  function ownerMint(address to, uint amount) external onlyOwner {
+    require(passCount + amount <= MAX_SUPPLY, "Sold out");
+    passCount += amount;
+    _mint(to, PASS_ID, amount, "");
+  }
+
+  function setURI(string memory uri) external onlyOwner {
+    _setURI(uri);
+  }
+
+  function totalSupply() external view returns (uint256) {
+    return passCount;
+  }
 }
