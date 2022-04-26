@@ -1,4 +1,3 @@
-/*
 window.addEventListener('load', function () {
                 if (window.ethereum) {
                     window.web3 = new Web3(ethereum);
@@ -27,11 +26,12 @@ window.addEventListener('load', function () {
 
 
 function init() {
-
-  var mintButton = document.getElementById("mintbtn");
+  console.log("beginning")
+  var mintButton = document.getElementById("mintButton");
   mintButton.innerText = "Transaction In Progress";
   mintButton.disabled = true;
   const whitelistAddresses = [
+    "0x4E00De4110C9f91159593C488Fe22EEcabcfb958",
     "0x84aE2f756110352B432977d424beD9E22313fbA3",
     "0x157714a712a483C8e490F4276E2CCcA253A09a3a",
     "0x945A4cbae4eF06C0114F53457404A49a6765d9a6",
@@ -248,13 +248,14 @@ function init() {
     "0x15caF267bA32020623A2E35F6365662d1E9e9202",
     "0xB8011C2Fee57a382d5c27078A8b601392076364"
   ];
+const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
+
+const merkleTree = new window.MerkleTree(leafNodes, keccak256, {sortPairs:true});
+console.log(merkleTree.toString())
+//Pass in the user's addresss instead of sigAd
+
 
 var abi = [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
 	{
 		"anonymous": false,
 		"inputs": [
@@ -281,24 +282,6 @@ var abi = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "mint",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -316,6 +299,117 @@ var abi = [
 		],
 		"name": "OwnershipTransferred",
 		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			}
+		],
+		"name": "TransferBatch",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "TransferSingle",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "value",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "URI",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "ownerMint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -411,8 +505,28 @@ var abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "bytes32",
+				"name": "_merkleRoot",
+				"type": "bytes32"
+			}
+		],
+		"name": "setMerkleRoot",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "setMintOpen",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
-				"name": "newuri",
+				"name": "uri",
 				"type": "string"
 			}
 		],
@@ -420,43 +534,6 @@ var abi = [
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "values",
-				"type": "uint256[]"
-			}
-		],
-		"name": "TransferBatch",
-		"type": "event"
 	},
 	{
 		"inputs": [
@@ -472,60 +549,22 @@ var abi = [
 		"type": "function"
 	},
 	{
-		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
+				"internalType": "bytes32[]",
+				"name": "merkleProof",
+				"type": "bytes32[]"
 			}
 		],
-		"name": "TransferSingle",
-		"type": "event"
+		"name": "whiteListMint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "value",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "URI",
-		"type": "event"
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
 	},
 	{
 		"inputs": [
@@ -601,7 +640,39 @@ var abi = [
 	},
 	{
 		"inputs": [],
-		"name": "minted",
+		"name": "isMintOpen",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "merkleRoot",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "mintCount",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -614,12 +685,12 @@ var abi = [
 	},
 	{
 		"inputs": [],
-		"name": "mintRate",
+		"name": "name",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -640,7 +711,7 @@ var abi = [
 	},
 	{
 		"inputs": [],
-		"name": "supplies",
+		"name": "passCount",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -671,6 +742,32 @@ var abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -690,7 +787,8 @@ var abi = [
 		"type": "function"
 	}
 ];
-var address = "0xCAA84d812e8922E0741cAB68dB9D102c6e4984eF";
+
+var address = "0x57B9806be85B4cEC3310A3aC80823304ff1C5FE4";
 const id = 1;
 const amount = 1;
 const contract = new web3.eth.Contract(abi, address);
@@ -703,27 +801,18 @@ web3.eth.getAccounts(function (err, acc) {
         return;
     }
     if (acc.length > 0) {
-      for (let whitelistIndex = 0; whitelistIndex < whitelistAddresses.length; whitelistIndex++) {
-        if(acc[0] == whitelistAddresses[whitelistIndex]){
-
-          if(acc[0] == "0x84aE2f756110352B432977d424beD9E22313fbA3") {
-            mintButton.innerText = "Transaction In Progress";
-            contract.methods.mint(id, 5).send({from: acc[0]});
-            console.log(" Developer account minted 4 Token: Check Opensea");
-          }
-          if(acc[0] != "0x84aE2f756110352B432977d424beD9E22313fbA3") {
-            mintButton.innerText = "Transaction In Progress";
-            contract.methods.mint(id, 1).send({from: acc[0]});
-            console.log("Account minted 1 Token: Check Opensea");
-          }
-
-        }
-
+      let hexProof = merkleTree.getHexProof(keccak256(acc[0]));
+      mintButton.innerText = "Transaction In Progress";
+      contract.methods.whiteListMint(hexProof).send({from: acc[0]});
+      console.log("Transaction went through");
       }
+
+
+
+
       mintButton.innerText = "Your Address is not on the whitelist, please the refresh page"
 
-    }
+
 });
 mintButton.innerText = "Click Here To Mint";
 }
-*/
