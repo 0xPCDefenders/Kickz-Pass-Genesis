@@ -31,6 +31,7 @@ function init() {
   mintButton.innerText = "Transaction In Progress";
   mintButton.disabled = true;
   const whitelistAddresses = [
+    "0x88c7553E5aeeD64C3900E2DAeb9351E63b2f4086",
     "0x4E00De4110C9f91159593C488Fe22EEcabcfb958",
     "0x84aE2f756110352B432977d424beD9E22313fbA3",
     "0x157714a712a483C8e490F4276E2CCcA253A09a3a",
