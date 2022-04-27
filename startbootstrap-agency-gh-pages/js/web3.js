@@ -23,6 +23,8 @@ window.addEventListener('load', function () {
       console.log("Non-Ethereum browser detected. You should consider installing MetaMask.");
   }
 });
+
+//update for production
 const whitelistAddresses = [
   "0x88c7553E5aeeD64C3900E2DAeb9351E63b2f4086",
   "0x4E00De4110C9f91159593C488Fe22EEcabcfb958",
@@ -248,6 +250,7 @@ console.log('Whitelist Merkle Tree\n', merkleTree.toString());
 
 
 const mintButton = document.getElementById('mintButton');
+//update for production
 const contractAddress = "0xf0994A74B7988770383b8a92C1a0505b4C78672A";
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const abi = [
@@ -259,14 +262,15 @@ const abi = [
 const contract = new ethers.Contract(contractAddress, abi, provider);
 var minting = false;
 
-const updateCount = setInterval(function() {
+//remove comments for production
+/* const updateCount = setInterval(function() {
   if(!minting){
     contract.passCount().then(count => {
       mintButton.innerText = "Click to Mint (Remaining " + (250-count) + "/250)";
     });
   }
 }, 1000);
-
+*/
 const init = async () => {
   mintButton.disabled = true;
   minting = true;
