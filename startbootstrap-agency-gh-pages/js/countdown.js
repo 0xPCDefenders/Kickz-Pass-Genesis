@@ -1,5 +1,5 @@
 // Set the date we're counting down to
-var countDownDate = new Date("Apr 28, 2022 15:00:00").getTime();
+var countDownDate = new Date("Apr 28, 2022 19:00:00 UTC").getTime();
 
 // Update the count down every 1 second
 var x = setInterval(function() {
@@ -28,5 +28,6 @@ var x = setInterval(function() {
   if (distance < 0) {
     clearInterval(x);
     document.getElementById("countDown").innerHTML = "Minting is avaliable";
+    document.getElementById("mintButton").disabled = false;
   }
 }, 1000);
