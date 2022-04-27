@@ -36,8 +36,7 @@ contract KickzPassGenesis is ERC1155, Ownable, ReentrancyGuard {
 
   mapping(address => uint) public mintCount;
 
-  //TODO: Update for production 
-  constructor() ERC1155("ipfs://QmdMn3YvP3vGSSKBy5AqCJoEGxY51MC1D388QJ9Ea7p2Gw/metadata.json") {}
+  constructor() ERC1155("ipfs://QmSvvYeC9rg9eb8iLV2gSuJX5T6YpYAyGnjrS8A4xmufJE/metadata.json") {}
 
 
   function whiteListMint(bytes32[] calldata merkleProof) external nonReentrant{
