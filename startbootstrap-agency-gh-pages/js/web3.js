@@ -271,7 +271,7 @@ console.log('Whitelist Merkle Tree\n', merkleTree.toString());
 
 const mintButton = document.getElementById('mintButton');
 //update for production
-const contractAddress = "0xf0994A74B7988770383b8a92C1a0505b4C78672A";
+const contractAddress = "0x38276F2Ba820a939B191A0dd9b4c032DA52a2C44";
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const abi = [
   "function passCount() view returns (uint)",
@@ -282,15 +282,15 @@ const abi = [
 const contract = new ethers.Contract(contractAddress, abi, provider);
 var minting = false;
 
-//remove comments for production
-/* const updateCount = setInterval(function() {
+const updateCount = setInterval(function() {
+  if(!(mintButton.innerText === "MINTING SOON"))
   if(!minting){
     contract.passCount().then(count => {
       mintButton.innerText = "Click to Mint (Remaining " + (250-count) + "/250)";
     });
   }
 }, 1000);
-*/
+
 const init = async () => {
   mintButton.disabled = true;
   minting = true;

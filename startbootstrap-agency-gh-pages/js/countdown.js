@@ -27,7 +27,8 @@ var x = setInterval(function() {
   // If the count down is finished, write some text
   if (distance < 0) {
     clearInterval(x);
-    document.getElementById("countDown").innerHTML = "Minting is avaliable";
+    document.getElementById("countDown").innerHTML = "Mint is Live!";
+    document.getElementById("mintButton").innerHTML = "Mint (Remaining ???/250)";
     document.getElementById("mintButton").disabled = false;
   }
 }, 1000);
