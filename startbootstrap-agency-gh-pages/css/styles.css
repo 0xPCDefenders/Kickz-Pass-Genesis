@@ -11422,6 +11422,9 @@ header.masthead {
   font-size: 30px;
   font-family: sans-serif;
 }
+#highlight.hover{
+  color: #198754;
+}
 #background-video {
   width: 100vw;
   height: 100vh;
