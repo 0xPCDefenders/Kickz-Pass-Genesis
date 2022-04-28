@@ -1,4 +1,4 @@
-/*
+
 window.addEventListener('load', function () {
   if (window.ethereum) {
       window.web3 = new Web3(ethereum);
@@ -24,7 +24,7 @@ window.addEventListener('load', function () {
       console.log("Non-Ethereum browser detected. You should consider installing MetaMask.");
   }
 });
-*/
+
 //update for production
 const whitelistAddresses = [
   "0x2f170E06d19B8c32c89220BCF215B6FCaA444D18",
@@ -266,7 +266,7 @@ const whitelistAddresses = [
 ];
 const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
 const merkleTree = new window.MerkleTree(leafNodes, keccak256, {sortPairs:true});
-console.log('Whitelist Merkle Tree\n', merkleTree.toString());
+//console.log('Whitelist Merkle Tree\n', merkleTree.toString());
 
 
 const mintButton = document.getElementById('mintButton');
@@ -305,7 +305,7 @@ const init = async () => {
   const isOpen = await contract.isMintOpen();
   const mints = await contract.mintCount(sigAd);
   let hexProof = merkleTree.getHexProof(keccak256(sigAd));
-  console.log(hexProof);
+  //console.log(hexProof);
   contractWithSigner.whiteListMint(hexProof)
     .then(mintButton.innerText = "Transaction in Progress")
     .catch(error => {
