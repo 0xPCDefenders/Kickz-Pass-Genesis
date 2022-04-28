@@ -1,3 +1,4 @@
+/*
 window.addEventListener('load', function () {
   if (window.ethereum) {
       window.web3 = new Web3(ethereum);
@@ -23,7 +24,7 @@ window.addEventListener('load', function () {
       console.log("Non-Ethereum browser detected. You should consider installing MetaMask.");
   }
 });
-
+*/
 //update for production
 const whitelistAddresses = [
   "0x2f170E06d19B8c32c89220BCF215B6FCaA444D18",
